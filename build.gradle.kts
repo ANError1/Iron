@@ -3,7 +3,7 @@ import org.embeddedt.embeddium.gradle.versioning.ProjectVersioner
 
 plugins {
     id("idea")
-    id("net.neoforged.moddev.legacy") version("2.0.63-beta-pr-118-legacy")
+    id("net.neoforged.moddev.legacyforge") version("2.0.63-beta")
     id("maven-publish")
     id("me.modmuss50.mod-publish-plugin") version("0.7.4")
     id("embeddium-fabric-remapper")
@@ -74,7 +74,7 @@ neoForge {
         }
     }
     mods {
-        create("embeddium") {
+        create("iron") {
             sourceSet(sourceSets["main"])
             extraSourceSets.forEach {
                 sourceSet(sourceSets[it])
@@ -87,7 +87,7 @@ neoForge {
 
             systemProperty("mixin.env.remapRefMap", "true")
             systemProperty("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-            mods.add(neoForge.mods.named("embeddium"))
+            mods.add(neoForge.mods.named("iron").get())
         }
 
         create("client") {
@@ -253,7 +253,7 @@ publishMods {
         }
     }
 
-    displayName = "[${"minecraft_version"()}] Embeddium ${"mod_version"()}"
+    displayName = "[${"minecraft_version"()}] Iron ${"mod_version"()}"
 }
 
 fun getModVersion(): String {

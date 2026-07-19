@@ -55,6 +55,7 @@ public class MixinTaintDetector implements IExtension {
      */
     private static final Collection<String> MOD_ID_WHITELIST = Set.of(
             "embeddium", // obviously
+            "iron", //Iron has been contaminated by itself
             "flywheel" // mixin removed in next release, and only targets a class we are currently forced to protect anyway
     );
 

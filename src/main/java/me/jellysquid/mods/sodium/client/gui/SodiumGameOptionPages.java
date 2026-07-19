@@ -405,6 +405,14 @@ public class SodiumGameOptionPages {
                         .setEnabled(supportsNoErrorContext())
                         .setFlags(OptionFlag.REQUIRES_GAME_RESTART)
                         .build())
+                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
+                        .setId(StandardOptions.Option.SHOW_FPS)
+                        .setName(Component.translatable("embeddium.options.show_fps.name"))
+                        .setTooltip(Component.translatable("embeddium.options.show_fps.tooltip"))
+                        .setControl(TickBoxControl::new)
+                        .setImpact(OptionImpact.LOW)
+                        .setBinding((opts, value) -> opts.performance.showFps = value, opts -> opts.performance.showFps)
+                        .build())
                 .build());
 
         return new OptionPage(Component.translatable("sodium.options.pages.performance"), ImmutableList.copyOf(groups));

@@ -50,7 +50,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public class EmbeddiumVideoOptionsScreen extends Screen {
-    private static final ResourceLocation LOGO_LOCATION = new ResourceLocation(SodiumClientMod.MODID, "textures/embeddium/gui/logo_transparent.png");
+    private static final ResourceLocation LOGO_LOCATION = new ResourceLocation("embeddium", "textures/embeddium/gui/logo_transparent.png");
     private static final int LOGO_SIZE = 256;
 
     private static final AtomicReference<Component> tabFrameSelectedTab = new AtomicReference<>(null);

@@ -1,4 +1,13 @@
 {
-  "embeddium.conflicting_mod": "Embeddium 检测到已安装的模组中有些可能会导致渲染问题或崩溃。建议卸载它们。请参考以下列表。",
-  "embeddium.conflicting_mod_list": "[{2}]"
+  "embeddium.conflicting_mod": "Embeddium 检测到存在已知会导致渲染问题/崩溃的模组。建议卸载这些模组。详见下方列表。",
+  "embeddium.conflicting_mod_list": "[{2}]",
+  "embeddium.search_bar_empty": "搜索选项...",
+  "embeddium.options.added_by_mod_string": "由模组添加：%s",
+  "embeddium.options.fullscreen.resolution.tooltip": "控制游戏在全屏模式下的分辨率。",
+  "iron.options.use_quad_normals_for_lighting.name": "启用精确四边形着色",
+  "iron.options.use_quad_normals_for_lighting.tooltip": "启用后，Embeddium 会根据非原版方块面的实际朝向（而非轴对齐方向）为其应用着色。在Forge实验性光照管线禁用时（为获得最佳性能，建议禁用），这可以提升光照质量。\n\n若实验性光照管线已启用，此选项无效果。",
+  "embeddium.options.use_render_pass_optimization.name": "启用渲染通道优化",
+  "embeddium.options.use_render_pass_optimization.tooltip": "启用后，当纹理实际为不透明（或透明）但方块模型面被标记为透明（或半透明）时，Embeddium 会检测到该情况，并自动为其使用更优的渲染通道。\n\n当光影(光影包)被启用时，此优化无效果。",
+  "embeddium.options.show_fps.name": "显示FPS",
+  "embeddium.options.show_fps.tooltip": "启用后，在屏幕左上角显示当前游戏的实时帧率。"
 }
