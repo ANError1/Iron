@@ -40,11 +40,6 @@ This mod is not compatible with any mobile devices! If you wish to use it on a m
 | 1.20.X  |  NeoForge      | No plan          |
 | 1.21.1  |  NeoForge      | Planned support  |
 | 1.21.11 |  NeoForge      |Suspension pending|
-| 1.12.2  |  Cleanroom     |   In progress    |
-
-> 1.12.2 is expected to need Java 21 or higher, this means you’ll need to use the Cleanroom Loader
-
-> [Cleanroom Loader download](https://github.com/CleanroomMC/Cleanroom/releases)
 
 **Unlisted versions have either ceased receiving updates or are no longer supported! Please do not submit issues for these versions! as they will be closed immediately. Unless they are also valid for supported versions!**
 
