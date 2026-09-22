@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * This class detects mods that apply mixins to Embeddium internals, and applies various levels of enforcement,
@@ -178,6 +179,9 @@ public class MixinTaintDetector implements IExtension {
         }
 
         packagePrefixToModCache.put(pkg, id);
+        if(TaintExplainer.isDebugEnabled()) {
+            LOGGER.info("[Explainer-Debug] Resolved mixin package '{}' to mod '{}'", pkg, id);
+        }
         return id;
     }
 
@@ -198,30 +202,77 @@ public class MixinTaintDetector implements IExtension {
     }
 
     /**
-     * Filters the list of mixins targeting a class and returns ones from mods with ineligible dependency restrictions.
-     * @param mixins the full list of mixins
-     * @return a map pointing from ineligible mod ID to any mixins from that mod for the class
+     * Mixin: Source-based classification results relative to pollution strategies.
      */
-    private static Map<String, List<IMixinInfo>> filterInvalidMixins(Collection<IMixinInfo> mixins) {
-        Map<String, List<IMixinInfo>> map = new HashMap<>();
+    public enum MixinSourceStatus {
+        /**
+         * The associated mod has not declared an Embeddium dependency, or the dependency is not locked to a single version. Such injections can pollute instances.
+         */
+        TAINT,
+        /**
+         * The mod declares the correct locked version of the Embeddium dependency, and injection is permitted.
+         */
+        ALLOWED,
+        /**
+         * The associated mod is listed in {@link #MOD_ID_WHITELIST} and is exempt from pollution rules.
+         */
+        WHITELISTED,
+        /**
+         * Unable to determine which mod the mixin belongs to
+         */
+        UNKNOWN
+    }
+
+    /**
+     * A mixin and its origin attribution information.
+     */
+    public record MixinAttribution(IMixinInfo mixin, String modId, MixinSourceStatus status, String reason) {
+    }
+
+    /**
+     * Classify all mixins injected into a class by their source. Unlike the old filtering approach, no mixin is discarded here,
+     * To enable the interpreter to generate reports for all injections, including those from whitelists and unrecognized sources.
+     * @param mixins The complete list of mixins for this class.
+     * @return One ownership record corresponding to each mixin.
+     */
+    private static List<MixinAttribution> classifyMixins(Collection<IMixinInfo> mixins) {
+        List<MixinAttribution> attributions = new ArrayList<>();
         for(IMixinInfo mixin : mixins) {
             var pkg = mixin.getConfig().getMixinPackage();
             String modId = getModIdByPackage(pkg);
+            MixinSourceStatus status;
+            String reason;
             if(MOD_ID_WHITELIST.contains(modId)) {
-                continue;
+                status = MixinSourceStatus.WHITELISTED;
+                reason = "mod is whitelisted";
+            } else {
+                var file = LoadingModList.get().getModFileById(modId);
+                if(file == null) {
+                    status = MixinSourceStatus.UNKNOWN;
+                    reason = "could not locate the mod owning mixin package '" + pkg + "'";
+                } else {
+                    var deps = file.getMods().get(0).getDependencies();
+                    var embeddiumDeps = deps.stream().filter(dep -> dep.getModId().equals("embeddium")).toList();
+                    if(embeddiumDeps.isEmpty()) {
+                        status = MixinSourceStatus.TAINT;
+                        reason = "no Embeddium dependency declared";
+                    } else if(embeddiumDeps.stream().anyMatch(d -> !isDepSingleVersion(d))) {
+                        status = MixinSourceStatus.TAINT;
+                        reason = "Embeddium dependency is not pinned to an exact version";
+                    } else {
+                        status = MixinSourceStatus.ALLOWED;
+                        reason = "pinned Embeddium dependency declared";
+                    }
+                    if(TaintExplainer.isDebugEnabled()) {
+                        LOGGER.info("[Explainer-Debug] Dependency check for '{}': {} -> {}", modId,
+                                embeddiumDeps.isEmpty() ? "no Embeddium dependency" : embeddiumDeps.stream().map(String::valueOf).collect(Collectors.joining(", ")),
+                                status);
+                    }
+                }
             }
-            var file = LoadingModList.get().getModFileById(modId);
-            if(file == null) {
-                continue;
-            }
-            var deps = file.getMods().get(0).getDependencies();
-            var embeddiumDeps = deps.stream().filter(dep -> dep.getModId().equals("embeddium")).toList();
-            // No dep or no single-version dep are both not allowed
-            if(embeddiumDeps.isEmpty() || embeddiumDeps.stream().anyMatch(d -> !isDepSingleVersion(d))) {
-                map.computeIfAbsent(modId, k -> new ArrayList<>()).add(mixin);
-            }
+            attributions.add(new MixinAttribution(mixin, modId, status, reason));
         }
-        return map;
+        return attributions;
     }
 
     @Override
@@ -234,17 +285,27 @@ public class MixinTaintDetector implements IExtension {
         if(isEmbeddiumClass(name)) {
             var mixins = getPotentialMixinsForClass(classInfo);
             if(!mixins.isEmpty()) {
-                var illegalMixinMap = filterInvalidMixins(mixins);
+                List<MixinAttribution> attributions = classifyMixins(mixins);
+                Map<String, List<IMixinInfo>> illegalMixinMap = new LinkedHashMap<>();
+                for(MixinAttribution attribution : attributions) {
+                    if(attribution.status() == MixinSourceStatus.TAINT) {
+                        illegalMixinMap.computeIfAbsent(attribution.modId(), k -> new ArrayList<>()).add(attribution.mixin());
+                    }
+                }
                 if(!illegalMixinMap.isEmpty()) {
                     if(TAINTING_MODS.isEmpty()) {
                         LOGGER.error("Mod mixin into Embeddium internals detected. This instance is now tainted. The Embeddium team does not provide any guarantee of support for issues encountered while such mods are installed.");
                     }
                     TAINTING_MODS.addAll(illegalMixinMap.keySet());
-                    var mixinList = "[" + String.join(", ", illegalMixinMap.keySet()) + "]";
+                }
+                var mixinList = "[" + String.join(", ", illegalMixinMap.keySet()) + "]";
+                if(!illegalMixinMap.isEmpty() && !TaintExplainer.isEnabled()) {
                     LOGGER.warn("Mod(s) {} are modifying Embeddium class {}, which may cause instability.", mixinList, name);
-                    if(ENFORCE_LEVEL == EnforceLevel.CRASH) {
-                        throw new IllegalStateException("Mods " + mixinList + " are mixing into internal Embeddium class " + name + ". This has potential to destabilize the game, and the taint detector is currently configured to crash.");
-                    }
+                }
+                // The interpreter performs a no-op when closed
+                TaintExplainer.explain(name, attributions);
+                if(!illegalMixinMap.isEmpty() && ENFORCE_LEVEL == EnforceLevel.CRASH) {
+                    throw new IllegalStateException("Mods " + mixinList + " are mixing into internal Embeddium class " + name + ". This has potential to destabilize the game, and the taint detector is currently configured to crash.");
                 }
             }
         }
