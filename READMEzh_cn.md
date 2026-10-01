@@ -127,3 +127,5 @@ Embeddium尽管从Sodium(~~Rubidium~~)分支出来，但CaffeineMC不支持Embed
 Embeddium 使用GUN LGPL V3 许可
 
 选项屏幕代码的部分内容基于FlashyReese的Reese's sodium options，并根据[MIT许可证](https://opensource.org/license/mit)使用, 位于`src/main/resources/licenses/rso.txt`
+
+更好的日志的内容和代码来自Explainium，采用MIT许可证，位于`src/main/resources/licenses/explainium.txt`
