@@ -20,6 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Explainium 风格的污染归属解释器：把 Embeddium 通用的污染警告替换为带完整归属信息的输出，
+ * 明确指出是哪个 mod 注入了 Embeddium 内部类、涉及哪些 mixin 与目标类。
+ * <p>
+ * 检测逻辑本身仍在 {@link MixinTaintDetector} 中，本类只负责记录归属数据并格式化消息，
+ * 不会改变任何污染判定或强制（CRASH）行为。
+ */
 public final class TaintExplainer {
     private static final Logger LOGGER = LoggerFactory.getLogger("Embeddium-TaintExplainer");
 
@@ -34,7 +41,7 @@ public final class TaintExplainer {
     }
 
     /**
-     * {@return Whether the interpreter is enabled (falls back to the original brief warning message when false)}
+     * {@return 解释器是否启用（false 时回退到原有简短警告消息）}
      */
     public static boolean isEnabled() {
         if(enabled == null) {
@@ -48,22 +55,22 @@ public final class TaintExplainer {
     }
 
     /**
-     * {@return Whether to output debugging logs (injection of whitelist mods, package name resolution, and dependency determination details)}
+     * {@return 是否输出调试日志（白名单 mod 的注入、包名解析、依赖判定细节）}
      */
     public static boolean isDebugEnabled() {
         if(debugLogging == null) {
-            isEnabled(); // cofig loaded?
+            isEnabled(); // 确保配置已加载
         }
         return Boolean.TRUE.equals(debugLogging);
     }
 
     /**
-     * For a specific internal class of Embeddium, output the attribution messages grouped by mod. One message per mod:
-     * Includes the mod display name/mod ID/version, mixin class name, mixin configuration file, and the reason for detection.
-     * This method is called during the mixin application phase and must never throw an exception.
+     * 针对某个 Embeddium 内部类，按 mod 分组输出归属消息。每个 mod 一条：
+     * 包含 mod 显示名/modID/版本、mixin 类名、mixin 配置文件与判定原因。
+     * 该方法在 mixin 应用阶段被调用，绝不能抛出异常。
      *
-     * @param targetClassName The name of the internal class of Embeddium being injected
-     * @param attributions All mixins injected into this class and their attribution information
+     * @param targetClassName 正在被注入的 Embeddium 内部类名
+     * @param attributions    所有注入该类的 mixin 及其归属信息
      */
     public static void explain(String targetClassName, List<MixinTaintDetector.MixinAttribution> attributions) {
         if(!isEnabled()) {
@@ -111,7 +118,7 @@ public final class TaintExplainer {
     }
 
     /**
-     * {@return mod's readable description: display name (modID version); fallback to bare modID when query fails}
+     * {@return mod 的可读描述：显示名 (modID 版本)；查询失败时回退为裸 modID}
      */
     private static String describeMod(String modId) {
         try {
@@ -132,7 +139,7 @@ public final class TaintExplainer {
                 }
             }
         } catch(RuntimeException e) {
-            // return modID
+            // 回退到裸 modID
         }
         return "'" + modId + "'";
     }
@@ -206,7 +213,7 @@ public final class TaintExplainer {
     }
 
     /**
-     *  A set of mixins with the same mod, the same judgment result, and the same cause.
+     * 同一 mod、同一判定结果、同一原因的一组 mixin。
      */
     private record Group(String modId, MixinTaintDetector.MixinSourceStatus status, String reason, List<IMixinInfo> mixins) {
     }
