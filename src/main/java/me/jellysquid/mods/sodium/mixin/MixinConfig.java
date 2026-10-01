@@ -86,6 +86,11 @@ public class MixinConfig {
         this.addMixinRule("features.world.biome", true);
         this.addMixinRule("features.world.storage", true);
 
+        // Opticore: async entity culling. Its mixins live in me.jellysquid.mods.sodium.mixin.opticore
+        // so that both this rule and the entries in embeddium.mixins.json resolve correctly; the
+        // supporting implementation is under org.embeddedt.embeddium.opticore.
+        this.addMixinRule("opticore", true);
+
         this.addMixinRule("workarounds", true);
         this.addMixinRule("workarounds.context_creation", true);
         this.addMixinRule("workarounds.event_loop", true);

@@ -202,38 +202,38 @@ public class MixinTaintDetector implements IExtension {
     }
 
     /**
-     * Mixin: Source-based classification results relative to pollution strategies.
+     * mixin 来源相对于污染策略的分类结果。
      */
     public enum MixinSourceStatus {
         /**
-         * The associated mod has not declared an Embeddium dependency, or the dependency is not locked to a single version. Such injections can pollute instances.
+         * 所属 mod 未声明 Embeddium 依赖，或依赖未锁定到单一版本。此类注入会污染实例。
          */
         TAINT,
         /**
-         * The mod declares the correct locked version of the Embeddium dependency, and injection is permitted.
+         * 所属 mod 声明了正确锁定版本的 Embeddium 依赖，注入被允许。
          */
         ALLOWED,
         /**
-         * The associated mod is listed in {@link #MOD_ID_WHITELIST} and is exempt from pollution rules.
+         * 所属 mod 在 {@link #MOD_ID_WHITELIST} 中，豁免于污染规则。
          */
         WHITELISTED,
         /**
-         * Unable to determine which mod the mixin belongs to
+         * 无法确定 mixin 所属的 mod。
          */
         UNKNOWN
     }
 
     /**
-     * A mixin and its origin attribution information.
+     * 一条 mixin 及其来源归属信息。
      */
     public record MixinAttribution(IMixinInfo mixin, String modId, MixinSourceStatus status, String reason) {
     }
 
     /**
-     * Classify all mixins injected into a class by their source. Unlike the old filtering approach, no mixin is discarded here,
-     * To enable the interpreter to generate reports for all injections, including those from whitelists and unrecognized sources.
-     * @param mixins The complete list of mixins for this class.
-     * @return One ownership record corresponding to each mixin.
+     * 对所有注入某个类的 mixin 按来源分类。与旧的过滤式做法不同，这里不丢弃任何 mixin，
+     * 以便解释器能对全部注入（包括白名单与无法识别来源的）生成报告。
+     * @param mixins 该类的完整 mixin 列表
+     * @return 每条 mixin 对应一条归属记录
      */
     private static List<MixinAttribution> classifyMixins(Collection<IMixinInfo> mixins) {
         List<MixinAttribution> attributions = new ArrayList<>();
@@ -302,7 +302,7 @@ public class MixinTaintDetector implements IExtension {
                 if(!illegalMixinMap.isEmpty() && !TaintExplainer.isEnabled()) {
                     LOGGER.warn("Mod(s) {} are modifying Embeddium class {}, which may cause instability.", mixinList, name);
                 }
-                // The interpreter performs a no-op when closed
+                // Explainium 风格的归属报告（解释器关闭时为空操作）
                 TaintExplainer.explain(name, attributions);
                 if(!illegalMixinMap.isEmpty() && ENFORCE_LEVEL == EnforceLevel.CRASH) {
                     throw new IllegalStateException("Mods " + mixinList + " are mixing into internal Embeddium class " + name + ". This has potential to destabilize the game, and the taint detector is currently configured to crash.");

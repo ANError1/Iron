@@ -12,5 +12,7 @@
     "conformVisibility" : true
   },
   "client" : [
+    "opticore.OpticoreLevelRendererMixin",
+    "opticore.OpticoreEntityRenderDispatcherMixin"
   ]
 }
