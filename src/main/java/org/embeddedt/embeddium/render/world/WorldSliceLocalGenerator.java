@@ -7,15 +7,11 @@ import org.objectweb.asm.*;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
@@ -160,14 +156,6 @@ public class WorldSliceLocalGenerator {
             return DEFINE_CLASS.get().define(bytes, WORLD_SLICE_LOCAL_CLASS_NAME.replace('/', '.'));
         } catch(Exception e) {
             throw new RuntimeException("Error defining WorldSlice wrapper", e);
-        }
-    }
-
-    public static void testClassGeneration() {
-        try {
-            Files.write(new File("/tmp/WorldSliceLocal.class").toPath(), createWrapperClassBytecode(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch(IOException e) {
-            e.printStackTrace();
         }
     }
 

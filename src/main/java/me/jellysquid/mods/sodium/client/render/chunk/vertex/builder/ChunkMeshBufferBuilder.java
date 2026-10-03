@@ -21,6 +21,10 @@ public class ChunkMeshBufferBuilder {
     private int sectionIndex;
 
     public ChunkMeshBufferBuilder(ChunkVertexType vertexType, int initialCapacity, boolean collectSortState) {
+        if (initialCapacity <= 0) {
+            throw new IllegalArgumentException("Initial vertex capacity must be positive");
+        }
+
         this.encoder = vertexType.getEncoder();
         this.stride = vertexType.getVertexFormat().getStride();
 
@@ -33,14 +37,19 @@ public class ChunkMeshBufferBuilder {
     }
 
     public void push(ChunkVertexEncoder.Vertex[] vertices, Material material) {
-        var vertexStart = this.count;
         var vertexCount = vertices.length;
 
-        if (this.count + vertexCount >= this.capacity) {
-            this.grow(this.stride * vertexCount);
+        if (vertexCount == 0) {
+            return;
         }
 
-        long ptr = MemoryUtil.memAddress(this.buffer, this.count * this.stride);
+        int requiredCapacity = Math.addExact(this.count, vertexCount);
+
+        if (requiredCapacity > this.capacity) {
+            this.grow(requiredCapacity);
+        }
+
+        long ptr = MemoryUtil.memAddress(this.buffer, bytesForVertices(this.count));
 
         if (this.analyzer != null) {
             for (ChunkVertexEncoder.Vertex vertex : vertices) {
@@ -55,17 +64,24 @@ public class ChunkMeshBufferBuilder {
         this.count += vertexCount;
     }
 
-    private void grow(int len) {
-        // The new capacity will at least as large as the write it needs to service
-        int cap = Math.max(this.capacity * 2, this.capacity + len);
+    private void grow(int requiredCapacity) {
+        // Capacity is measured in vertices. Keeping byte conversion in one place prevents
+        // integer overflow from producing an undersized native allocation.
+        int doubledCapacity = this.capacity > Integer.MAX_VALUE / 2
+                ? Integer.MAX_VALUE
+                : this.capacity * 2;
+        int newCapacity = Math.max(doubledCapacity, requiredCapacity);
 
-        // Update the buffer and capacity now
-        this.setBufferSize(cap * this.stride);
+        this.setBufferSize(newCapacity);
     }
 
-    private void setBufferSize(int capacity) {
-        this.buffer = MemoryUtil.memRealloc(this.buffer, capacity * this.stride);
-        this.capacity = capacity;
+    private void setBufferSize(int vertexCapacity) {
+        this.buffer = MemoryUtil.memRealloc(this.buffer, bytesForVertices(vertexCapacity));
+        this.capacity = vertexCapacity;
+    }
+
+    private int bytesForVertices(int vertexCount) {
+        return Math.multiplyExact(vertexCount, this.stride);
     }
 
     public void start(int sectionIndex) {
@@ -100,7 +116,7 @@ public class ChunkMeshBufferBuilder {
             throw new IllegalStateException("No vertex data in buffer");
         }
 
-        return MemoryUtil.memSlice(this.buffer, 0, this.stride * this.count);
+        return MemoryUtil.memSlice(this.buffer, 0, bytesForVertices(this.count));
     }
 
     public int count() {
