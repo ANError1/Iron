@@ -84,6 +84,7 @@ public final class OpticoreCommand {
 
         reply(ctx, Component.literal("  distanceCulling=" + config.enableDistanceCulling
                 + " occlusionCulling=" + config.enableOcclusionCulling
+                + " debugStats=" + config.showDebugStats
                 + " raycastPending=" + RaycastBridge.hasPendingWork()));
 
         reply(ctx, Component.literal("  cutoffs: passive=" + config.passiveMobDistance

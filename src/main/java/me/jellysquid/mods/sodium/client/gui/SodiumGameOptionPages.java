@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfig;
 import org.embeddedt.embeddium.client.gui.options.StandardOptions;
 import org.embeddedt.embeddium.impl.gui.options.FullscreenResolutionHelper;
+import org.embeddedt.embeddium.opticore.OpticoreConfig;
 import org.embeddedt.embeddium.render.ShaderModBridge;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
@@ -33,6 +34,18 @@ import java.util.List;
 public class SodiumGameOptionPages {
     private static final SodiumOptionsStorage sodiumOpts = new SodiumOptionsStorage();
     private static final MinecraftOptionsStorage vanillaOpts = new MinecraftOptionsStorage();
+
+    private static final OptionStorage<OpticoreConfig> opticoreOpts = new OptionStorage<>() {
+        @Override
+        public OpticoreConfig getData() {
+            return OpticoreConfig.get();
+        }
+
+        @Override
+        public void save() {
+            getData().save();
+        }
+    };
 
     private static int computeMaxRangeForRenderDistance(@SuppressWarnings("SameParameterValue") int injectedRenderDistance) {
         if(vanillaOpts.getData().renderDistance().values() instanceof OptionInstance.IntRange range) {
@@ -412,6 +425,14 @@ public class SodiumGameOptionPages {
                         .setControl(TickBoxControl::new)
                         .setImpact(OptionImpact.LOW)
                         .setBinding((opts, value) -> opts.performance.showFps = value, opts -> opts.performance.showFps)
+                        .build())
+                .add(OptionImpl.createBuilder(boolean.class, opticoreOpts)
+                        .setId(StandardOptions.Option.SHOW_DEBUG_STATS)
+                        .setName(Component.translatable("embeddium.options.show_debug_stats.name"))
+                        .setTooltip(Component.translatable("embeddium.options.show_debug_stats.tooltip"))
+                        .setControl(TickBoxControl::new)
+                        .setImpact(OptionImpact.LOW)
+                        .setBinding((opts, value) -> opts.showDebugStats = value, opts -> opts.showDebugStats)
                         .build())
                 .build());
 

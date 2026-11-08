@@ -24,6 +24,9 @@ public final class OpticoreConfig {
     /** Render the Opticore overlay on the HUD when the vanilla debug screen is hidden. */
     public volatile boolean showOverlay = false;
 
+    /** Add Opticore performance statistics to the vanilla debug screen. */
+    public volatile boolean showDebugStats = true;
+
     /** Verbose logging of culling statistics once per second. */
     public volatile boolean logStatistics = false;
 
@@ -96,6 +99,7 @@ public final class OpticoreConfig {
     private void readFrom(JsonObject root) {
         this.enabled = readBoolean(root, "enabled", this.enabled);
         this.showOverlay = readBoolean(root, "showOverlay", this.showOverlay);
+        this.showDebugStats = readBoolean(root, "showDebugStats", this.showDebugStats);
         this.logStatistics = readBoolean(root, "logStatistics", this.logStatistics);
         this.maxResultAgeFrames = readInt(root, "maxResultAgeFrames", this.maxResultAgeFrames);
         this.maxOcclusionTestsPerCapture = readInt(root, "maxOcclusionTestsPerCapture", this.maxOcclusionTestsPerCapture);
@@ -117,6 +121,7 @@ public final class OpticoreConfig {
 
         this.enabled = defaults.enabled;
         this.showOverlay = defaults.showOverlay;
+        this.showDebugStats = defaults.showDebugStats;
         this.logStatistics = defaults.logStatistics;
         this.maxResultAgeFrames = defaults.maxResultAgeFrames;
         this.maxOcclusionTestsPerCapture = defaults.maxOcclusionTestsPerCapture;

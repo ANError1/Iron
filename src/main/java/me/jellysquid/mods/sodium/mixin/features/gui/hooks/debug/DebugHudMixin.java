@@ -8,7 +8,11 @@ import me.jellysquid.mods.sodium.client.util.NativeBuffer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
+import net.minecraft.client.resources.language.I18n;
 import org.embeddedt.embeddium_integrity.MixinTaintDetector;
+import org.embeddedt.embeddium.opticore.OpticoreConfig;
+import org.embeddedt.embeddium.opticore.util.CullingState;
+import org.embeddedt.embeddium.opticore.util.FrameProfiler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,6 +40,16 @@ public abstract class DebugHudMixin {
 
         if (renderer != null) {
             strings.addAll(renderer.getDebugStrings());
+        }
+
+        if (OpticoreConfig.get().showDebugStats) {
+            int scanned = CullingState.getLastScannedEntities();
+            int culled = CullingState.getCulledCount();
+            double culledPercent = scanned == 0 ? 0.0 : 100.0 * culled / scanned;
+            strings.add(String.format(java.util.Locale.ROOT, I18n.get("sodium.debug.opticore_stats"),
+                    FrameProfiler.getFps(), FrameProfiler.getAverageFrameTimeMs(),
+                    FrameProfiler.getOnePercentLowFps(), culled,
+                    culledPercent, CullingState.getLastWorkerMillis()));
         }
 
         for (int i = 0; i < strings.size(); i++) {

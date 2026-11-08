@@ -62,5 +62,6 @@ public final class StandardOptions {
         public static final ResourceLocation USE_QUAD_NORMALS_FOR_LIGHTING = new ResourceLocation(SodiumClientMod.MODID, "use_quad_normals_for_lighting");
         public static final ResourceLocation RENDER_PASS_OPTIMIZATION = new ResourceLocation(SodiumClientMod.MODID, "render_pass_optimization");
         public static final ResourceLocation SHOW_FPS = new ResourceLocation(SodiumClientMod.MODID, "show_fps");
+        public static final ResourceLocation SHOW_DEBUG_STATS = new ResourceLocation(SodiumClientMod.MODID, "show_debug_stats");
     }
 }

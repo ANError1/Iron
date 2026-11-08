@@ -1,4 +1,5 @@
 {
+  "sodium.debug.opticore_stats": "OptiCore: %.0f FPS | %.2f ms | 1%% low %.1f | culled %d (%.0f%%) | worker %.2f ms",
   "sodium.option_impact.low": "Low",
   "sodium.option_impact.medium": "Medium",
   "sodium.option_impact.high": "High",

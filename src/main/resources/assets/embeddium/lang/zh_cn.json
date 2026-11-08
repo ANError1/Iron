@@ -9,5 +9,7 @@
   "embeddium.options.use_render_pass_optimization.name": "启用渲染通道优化",
   "embeddium.options.use_render_pass_optimization.tooltip": "启用后，当纹理实际为不透明（或透明）但方块模型面被标记为透明（或半透明）时，Embeddium 会检测到该情况，并自动为其使用更优的渲染通道。\n\n当光影(光影包)被启用时，此优化无效果。",
   "embeddium.options.show_fps.name": "显示FPS",
-  "embeddium.options.show_fps.tooltip": "启用后，在屏幕左上角显示当前游戏的实时帧率。"
+  "embeddium.options.show_fps.tooltip": "启用后，在屏幕左上角显示当前游戏的实时帧率。",
+  "embeddium.options.show_debug_stats.name": "显示 OptiCore 调试统计",
+  "embeddium.options.show_debug_stats.tooltip": "启用后，在 F3 调试屏幕中显示 OptiCore 帧时间和实体裁剪统计。"
 }

@@ -1,4 +1,5 @@
 {
+  "sodium.debug.opticore_stats": "OptiCore：%.0f FPS | %.2f 毫秒 | 1%% Low %.1f | 已裁剪 %d（%.0f%%）| 后台 %.2f 毫秒",
   "sodium.option_impact.low": "低",
   "sodium.option_impact.medium": "中",
   "sodium.option_impact.high": "高",
