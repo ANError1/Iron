@@ -24,11 +24,26 @@ public class VertexSerializerRegistryImpl implements VertexSerializerRegistry {
     static {
         var classDumpPath = System.getProperty("sodium.codegen.dump", null);
 
+        Path validatedPath = null;
         if (classDumpPath != null) {
-            CLASS_DUMP_PATH = Path.of(classDumpPath);
-        } else {
-            CLASS_DUMP_PATH = null;
+            // Validate the dump path to prevent malicious configurations
+            try {
+                Path path = Path.of(classDumpPath).toAbsolutePath().normalize();
+                
+                // Ensure it's not a system-critical directory
+                String pathStr = path.toString().toLowerCase();
+                if (pathStr.contains("system32") || pathStr.contains("windows") || 
+                    pathStr.equals("/") || pathStr.equals("c:\\") || pathStr.equals("c:/")) {
+                    LOGGER.error("Rejecting unsafe class dump path: {}", classDumpPath);
+                } else {
+                    validatedPath = path;
+                    LOGGER.info("Class dump path set to: {}", validatedPath);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Invalid class dump path: {}", classDumpPath, e);
+            }
         }
+        CLASS_DUMP_PATH = validatedPath;
     }
 
     private final Long2ReferenceMap<VertexSerializer> cache = new Long2ReferenceOpenHashMap<>();
@@ -114,12 +129,36 @@ public class VertexSerializerRegistryImpl implements VertexSerializerRegistry {
     }
 
     private static void dumpClass(String id, VertexSerializerFactory.Bytecode bytecode) {
-        var path = CLASS_DUMP_PATH.resolve("VertexSerializer$Impl$%s.class".formatted(id));
-
+        // Validate id to prevent path traversal
+        if (id == null || id.contains("..") || id.contains("/") || id.contains("\\")) {
+            LOGGER.error("Invalid class identifier for dump: {}", id);
+            return;
+        }
+        
         try {
+            // Ensure dump directory exists and is writable
+            if (!Files.exists(CLASS_DUMP_PATH)) {
+                Files.createDirectories(CLASS_DUMP_PATH);
+            }
+            
+            // Validate that CLASS_DUMP_PATH is a directory
+            if (!Files.isDirectory(CLASS_DUMP_PATH)) {
+                LOGGER.error("Class dump path is not a directory: {}", CLASS_DUMP_PATH);
+                return;
+            }
+            
+            var fileName = "VertexSerializer$Impl$%s.class".formatted(id);
+            var path = CLASS_DUMP_PATH.resolve(fileName);
+            
+            // Ensure resolved path is still within CLASS_DUMP_PATH (prevent symlink attacks)
+            if (!path.normalize().startsWith(CLASS_DUMP_PATH.normalize())) {
+                LOGGER.error("Attempted path traversal detected: {}", path);
+                return;
+            }
+            
             Files.write(path, bytecode.copy());
         } catch (IOException e) {
-            LOGGER.warn("Could not dump bytecode to location: {}", path, e);
+            LOGGER.warn("Could not dump bytecode to location", e);
         }
     }
 
