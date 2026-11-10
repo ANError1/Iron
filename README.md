@@ -120,3 +120,7 @@ Embeddium is licensed under the Lesser GNU General Public License version 3.
 
 Portions of the option screen code are based on Reese's Sodium Options by FlashyReese, and are used under the terms of
 the [MIT license](https://opensource.org/license/mit), located in `src/main/resources/licenses/rso.txt`. 
+
+Better log content comes from Explainium and is used under the [MIT License](https://opensourec.org/license/mti), located in `src/main/resources/licenses/explainium.txt`.
+
+ACP (Asynchronous Culling Pipeline), DLT (Dynamic Load Throttling), or content under the org.embeddedt.embeddium.opticore package name originates from opticore, is used under the [MIT License](https://opensource.org/license/mit), and is located in `src/main/resources/licenses/opticores.txt`.
