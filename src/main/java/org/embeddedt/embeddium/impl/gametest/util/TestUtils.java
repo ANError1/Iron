@@ -127,7 +127,9 @@ public class TestUtils {
             NativeImage nativeimage = Screenshot.takeScreenshot(mc.getMainRenderTarget());
             File screenShotDir = new File(mc.gameDirectory, "screenshots");
             screenShotDir.mkdir();
-            File screenShot = new File(screenShotDir, name + ".png");
+            // Sanitize filename to prevent path traversal attacks
+            String sanitizedName = name.replaceAll("[^a-zA-Z0-9_\\-]", "_");
+            File screenShot = new File(screenShotDir, sanitizedName + ".png");
             screenShot.delete();
             try {
                 nativeimage.writeToFile(screenShot);
