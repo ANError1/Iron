@@ -11,5 +11,16 @@
   "embeddium.options.show_fps.name": "Show FPS",
   "embeddium.options.show_fps.tooltip": "When enabled, displays the current frames per second in the top-left corner of the screen.",
   "embeddium.options.show_debug_stats.name": "Show OptiCore Debug Stats",
-  "embeddium.options.show_debug_stats.tooltip": "When enabled, adds OptiCore frame-time and entity-culling statistics to the F3 debug screen."
+  "embeddium.options.show_debug_stats.tooltip": "When enabled, adds OptiCore frame-time and entity-culling statistics to the F3 debug screen.",
+  "iron.options.groups.performance_history": "Performance History",
+  "iron.options.performance_history.enabled.name": "Enable Performance History",
+  "iron.options.performance_history.enabled.tooltip": "When enabled, Iron will continuously record performance metrics like FPS, frame time, memory usage, and entity counts. This data can be visualized in-game or exported for analysis.",
+  "iron.options.performance_history.show_graph.name": "Show Performance Graph",
+  "iron.options.performance_history.show_graph.tooltip": "Displays a real-time performance graph overlay in the bottom-right corner showing FPS history, 1% low FPS, and memory usage. The graph updates continuously while playing.",
+  "iron.options.performance_history.detect_drops.name": "Detect Performance Drops",
+  "iron.options.performance_history.detect_drops.tooltip": "Automatically detects significant FPS drops and logs them with game state information. Useful for identifying what causes stuttering or lag spikes.",
+  "iron.options.performance_history.sampling_interval.name": "Sampling Interval",
+  "iron.options.performance_history.sampling_interval.tooltip": "Controls how often performance snapshots are captured in milliseconds. Lower values provide more detailed data but use slightly more memory. Default is 1000ms (1 second).",
+  "iron.options.performance_history.auto_export.name": "Auto-Export on Exit",
+  "iron.options.performance_history.auto_export.tooltip": "Automatically exports a performance report as JSON when you exit the game. Reports are saved to config/performance-reports/ and include statistics and all captured snapshots."
 }

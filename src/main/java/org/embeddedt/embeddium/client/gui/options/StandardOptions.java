@@ -16,6 +16,7 @@ public final class StandardOptions {
         public static final ResourceLocation CPU_SAVING = new ResourceLocation(SodiumClientMod.MODID, "cpu_saving");
         public static final ResourceLocation SORTING = new ResourceLocation(SodiumClientMod.MODID, "sorting");
         public static final ResourceLocation LIGHTING = new ResourceLocation(SodiumClientMod.MODID, "lighting");
+        public static final ResourceLocation PERFORMANCE_HISTORY = new ResourceLocation(SodiumClientMod.MODID, "performance_history");
     }
 
     public static class Pages {

@@ -24,6 +24,8 @@ import net.minecraftforge.common.ForgeConfig;
 import org.embeddedt.embeddium.client.gui.options.StandardOptions;
 import org.embeddedt.embeddium.impl.gui.options.FullscreenResolutionHelper;
 import org.embeddedt.embeddium.opticore.OpticoreConfig;
+import org.embeddedt.embeddium.performance.PerformanceHistory;
+import org.embeddedt.embeddium.performance.PerformanceHistoryConfig;
 import org.embeddedt.embeddium.render.ShaderModBridge;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
@@ -39,6 +41,18 @@ public class SodiumGameOptionPages {
         @Override
         public OpticoreConfig getData() {
             return OpticoreConfig.get();
+        }
+
+        @Override
+        public void save() {
+            getData().save();
+        }
+    };
+
+    private static final OptionStorage<PerformanceHistoryConfig> perfHistoryOpts = new OptionStorage<>() {
+        @Override
+        public PerformanceHistoryConfig getData() {
+            return PerformanceHistoryConfig.get();
         }
 
         @Override
@@ -433,6 +447,45 @@ public class SodiumGameOptionPages {
                         .setControl(TickBoxControl::new)
                         .setImpact(OptionImpact.LOW)
                         .setBinding((opts, value) -> opts.showDebugStats = value, opts -> opts.showDebugStats)
+                        .build())
+                .build());
+
+        groups.add(OptionGroup.createBuilder()
+                .setId(StandardOptions.Group.PERFORMANCE_HISTORY)
+                .add(OptionImpl.createBuilder(boolean.class, perfHistoryOpts)
+                        .setName(Component.translatable("iron.options.performance_history.enabled.name"))
+                        .setTooltip(Component.translatable("iron.options.performance_history.enabled.tooltip"))
+                        .setControl(TickBoxControl::new)
+                        .setImpact(OptionImpact.LOW)
+                        .setBinding((opts, value) -> opts.enabled = value, opts -> opts.enabled)
+                        .build())
+                .add(OptionImpl.createBuilder(boolean.class, perfHistoryOpts)
+                        .setName(Component.translatable("iron.options.performance_history.show_graph.name"))
+                        .setTooltip(Component.translatable("iron.options.performance_history.show_graph.tooltip"))
+                        .setControl(TickBoxControl::new)
+                        .setImpact(OptionImpact.LOW)
+                        .setBinding((opts, value) -> opts.showGraphOverlay = value, opts -> opts.showGraphOverlay)
+                        .build())
+                .add(OptionImpl.createBuilder(boolean.class, perfHistoryOpts)
+                        .setName(Component.translatable("iron.options.performance_history.detect_drops.name"))
+                        .setTooltip(Component.translatable("iron.options.performance_history.detect_drops.tooltip"))
+                        .setControl(TickBoxControl::new)
+                        .setImpact(OptionImpact.LOW)
+                        .setBinding((opts, value) -> opts.detectPerformanceDrops = value, opts -> opts.detectPerformanceDrops)
+                        .build())
+                .add(OptionImpl.createBuilder(int.class, perfHistoryOpts)
+                        .setName(Component.translatable("iron.options.performance_history.sampling_interval.name"))
+                        .setTooltip(Component.translatable("iron.options.performance_history.sampling_interval.tooltip"))
+                        .setControl(opt -> new SliderControl(opt, 100, 5000, 100, v -> Component.literal(v + " ms")))
+                        .setImpact(OptionImpact.LOW)
+                        .setBinding((opts, value) -> opts.samplingIntervalMs = value, opts -> opts.samplingIntervalMs)
+                        .build())
+                .add(OptionImpl.createBuilder(boolean.class, perfHistoryOpts)
+                        .setName(Component.translatable("iron.options.performance_history.auto_export.name"))
+                        .setTooltip(Component.translatable("iron.options.performance_history.auto_export.tooltip"))
+                        .setControl(TickBoxControl::new)
+                        .setImpact(OptionImpact.LOW)
+                        .setBinding((opts, value) -> opts.autoExportOnExit = value, opts -> opts.autoExportOnExit)
                         .build())
                 .build());
 

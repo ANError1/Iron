@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.gui.screen.ConfigCorruptedScreen;
 import net.minecraft.client.Minecraft;
+import org.embeddedt.embeddium.performance.PerformanceHistory;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
 import net.minecraft.server.packs.resources.ReloadInstance;
@@ -82,6 +83,9 @@ public class MinecraftClientMixin {
         }
 
         this.fences.enqueue(fence);
+        
+        // Update performance history tracking
+        PerformanceHistory.getInstance().tick();
     }
 
     /**

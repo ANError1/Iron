@@ -13,6 +13,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkConstants;
 
 import org.embeddedt.embeddium.api.EmbeddiumConstants;
+import org.embeddedt.embeddium.performance.PerformanceHistory;
 import org.embeddedt.embeddium.render.ShaderModBridge;
 import org.embeddedt.embeddium.taint.incompats.IncompatibleModManager;
 import org.embeddedt.embeddium.taint.scanning.TaintDetector;
@@ -63,6 +64,7 @@ public class SodiumClientMod {
     public void onClientSetup(final FMLClientSetupEvent event) {
         IncompatibleModManager.checkMods(event);
         FlawlessFrames.onClientInitialization();
+        PerformanceHistory.initialize();
     }
 
     public static SodiumGameOptions options() {
