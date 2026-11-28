@@ -38,6 +38,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -55,6 +56,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
@@ -94,7 +96,7 @@ public class TestRegistry {
         BLOCK_ENTITIES.register(bus);
         MinecraftForge.EVENT_BUS.register(GameEvents.class);
 
-        NETWORK_CHANNEL.registerMessage(0, SyncS2CPacket.class, SyncS2CPacket::encode, SyncS2CPacket::new, SyncS2CPacket::handle);
+        NETWORK_CHANNEL.registerMessage(0, SyncS2CPacket.class, SyncS2CPacket::encode, SyncS2CPacket::new, SyncS2CPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     private static void registerModelForAllStates(ModelEvent.ModifyBakingResult event, Block block, BakedModel model) {

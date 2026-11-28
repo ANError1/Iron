@@ -11,5 +11,16 @@
   "embeddium.options.show_fps.name": "显示FPS",
   "embeddium.options.show_fps.tooltip": "启用后，在屏幕左上角显示当前游戏的实时帧率。",
   "embeddium.options.show_debug_stats.name": "显示 OptiCore 调试统计",
-  "embeddium.options.show_debug_stats.tooltip": "启用后，在 F3 调试屏幕中显示 OptiCore 帧时间和实体裁剪统计。"
+  "embeddium.options.show_debug_stats.tooltip": "启用后，在 F3 调试屏幕中显示 OptiCore 帧时间和实体裁剪统计。",
+  "iron.options.groups.performance_history": "性能历史记录",
+  "iron.options.performance_history.enabled.name": "启用性能历史记录",
+  "iron.options.performance_history.enabled.tooltip": "启用后，Iron 会持续记录 FPS、帧时间、内存使用量和实体数量等性能指标。这些数据可在游戏内可视化或导出以供分析。",
+  "iron.options.performance_history.show_graph.name": "显示性能图表",
+  "iron.options.performance_history.show_graph.tooltip": "在屏幕右下角显示实时性能图表叠加层，展示 FPS 历史记录、1% 最低帧率和内存使用量。游玩时图表会持续更新。",
+  "iron.options.performance_history.detect_drops.name": "检测性能下降",
+  "iron.options.performance_history.detect_drops.tooltip": "自动检测显著的 FPS 下降，并将其与游戏状态信息一同记录。可用于确定造成卡顿或延迟峰值的原因。",
+  "iron.options.performance_history.sampling_interval.name": "采样间隔",
+  "iron.options.performance_history.sampling_interval.tooltip": "控制以毫秒为单位捕获性能快照的频率。数值越低，数据越详细，但会占用略多内存。默认值为 1000 毫秒（1 秒）。",
+  "iron.options.performance_history.auto_export.name": "退出时自动导出",
+  "iron.options.performance_history.auto_export.tooltip": "退出游戏时自动将性能报告导出为 JSON。报告保存至 config/performance-reports/，包含统计数据和所有已捕获的快照。"
 }
